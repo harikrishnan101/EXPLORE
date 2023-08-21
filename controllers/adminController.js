@@ -5,26 +5,34 @@ const UploadPage = ((req, res) => {
 })
 
 const createBlog = (req, res) => {
-    const fileStorage = multer.diskStorage({
-        destination: (req, file, cb) => {
-            cb(null, "public/uploads/");
-        },
-        filename: (req, files, cb) => {
-            cb(null, Date.now() + "-" + files.originalname)
-        }
-    })
+   try {
+     const fileStorage = multer.diskStorage({
+         destination: (req, file, cb) => {
+             cb(null, "public/uploads/");
+         },
+         filename: (req, files, cb) => {
+             cb(null, Date.now() + "-" + files.originalname)
+         }
+     })
+   } catch (error) {
+    
+   }
     const upload = multer({ storage: fileStorage }).array("images", 4)
-    upload(req, res, (err) => {
-        console.log(req.files);
-        BLOGS({
-            heading: req.body.heading,
-            category: req.body.category,
-            content: req.body.content,
-            Image: req.files,
-        }).save().then(response => {
-            res.redirect('/admin/upload')
-        })
-    })
+  try {
+      upload(req, res, (err) => {
+          console.log(req.files);
+          BLOGS({
+              heading: req.body.heading,
+              category: req.body.category,
+              content: req.body.content,
+              Image: req.files,
+          }).save().then(response => {
+              res.redirect('/admin/upload')
+          })
+      })
+  } catch (error) {
+    
+  }
 }
 const homepage = (req, res) => {
     BLOGS.find().then((response) => {
@@ -33,16 +41,20 @@ const homepage = (req, res) => {
 
 }
 const deletePost = (req, res) => {
-    BLOGS.findOne({ _id: req.body.postId }).then(selectedFileData => {
-        BLOGS.deleteOne({ _id: req.body.postId }).then((resp) => {
-            for (let i = 0; i < selectedFileData.image; i++) {
-                const filepath = path.join(__dirname, '..', 'public/upload', selectedFileData.image[i].filename)
-                fs.unlink(filepath, (err))
-
-            }
-        })
-
-    })
+   try {
+     BLOGS.findOne({ _id: req.body.postId }).then(selectedFileData => {
+         BLOGS.deleteOne({ _id: req.body.postId }).then((resp) => {
+             for (let i = 0; i < selectedFileData.image; i++) {
+                 const filepath = path.join(__dirname, '..', 'public/upload', selectedFileData.image[i].filename)
+                 fs.unlink(filepath, (err))
+ 
+             }
+         })
+ 
+     })
+   } catch (error) {
+    
+   }
 }
 
 module.exports = { UploadPage, createBlog, homepage, deletePost }
