@@ -5,7 +5,7 @@ const BLOGS = require('../models/blogSchema')
 const jwt = require('jsonwebtoken')
 const multer = require('multer')
 
-
+// loginPage********************************
 const loginPage = ((req, res) => {
     try {
         if (req.cookies.userJwt) {
@@ -18,18 +18,21 @@ const loginPage = ((req, res) => {
         
     }
 })
+
+
+// signUp **************************
 const signup = ((req, res) => {
     res.render('user/signup.hbs')
 })
 
 const doSignup = (req, res) => {
-    // console.log(req.body);
+    console.log(req.body);
    try {
      user({
          email: req.body.email,
          name: req.body.name,
          password: req.body.password,
-         number:req.body.number
+         number: req.body.number
      }).save().then((res) => {
          res.json({ signup: true })
      })
@@ -37,7 +40,7 @@ const doSignup = (req, res) => {
              res.json({ signup: false })
          })
    } catch (error) {
-    
+   
    }
 }
 const doLogin = (req, res) => {
@@ -52,7 +55,7 @@ const doLogin = (req, res) => {
                     httpOnly: true,
                     samSite: 'lax',
                     secure: false,
-                    maxAge: 24 * 60 * 60 * 1000
+                    maxAge: 24 * 60 * 60 * 1000   // 24 hours
                 })
     
                 res.status(200).json({ login: true })
@@ -85,46 +88,81 @@ const detailedview = (req, res) => {
 const createBlog = (req, res) => {
     res.render('user/upload.hbs')
 }
-const addBlogData =(req,res)=>{
-   try {
-     const fileStorage = multer.diskStorage({
-         destination: (req, file, cb) => {
-             cb(null, "public/uploads/");
-         },
-         filename: (req, files, cb) => {
-             cb(null, Date.now() + "-" + files.originalname)
-         }
-     })
-     const upload = multer({ storage: fileStorage }).array("images", 4)
-     upload(req, res, (err) => {
-         // console.log(req.files);
-         BLOGS({
-             heading:req.body.heading,
-             category: req.body.category,
-             content: req.body.content,
-             Image: req.files,
-             createdBy:req.query.id
-         }).save().then(response => {
-             res.redirect('/createBlog')
-         })
-     })
-   } catch (error) {
-    
-   }
+// const addBlogData =(req,res)=>{
+//    try {
+//      const fileStorage = multer.diskStorage({
+//          destination: (req, file, cb) => {
+//              cb(null, "public/uploads/");
+//          },
+//          filename: (req, files, cb) => {
+//              cb(null, Date.now() + "-" + files.originalname)
+//          }
+//      })
+//      const upload = multer({ storage: fileStorage }).array("images", 4)
+//      upload(req, res, (err) => {
+//          // console.log(req.files);
+//          BLOGS({
+//              heading:req.body.heading,
+//              category: req.body.category,
+//              content: req.body.content,
+//              Image: req.files,
+//              createdBy:req.query.id
+//          }).save().then(response => {
+//              res.redirect('/createBlog')
+//          })
+//      })
+//    } catch (error) {
+//     res.render('user/404.hbs')
+//    }
 
-}
+// }
+const addBlogData = (req, res) => {
+    const fileStorage = multer.diskStorage({
+        destination: (req, file, cb) => {
+            cb(null, "public/uploads/");
+        },
+        filename: (req, files, cb) => {
+            cb(null, Date.now() + "-" + files.originalname);
+        }
+    });
+
+    const upload = multer({ storage: fileStorage }).array("images", 4);
+
+    upload(req, res, (err) => {
+        if (err) {
+            console.error("Error uploading files:", err);
+            return res.render('user/404.hbs'); 
+        }
+
+        BLOGS({
+            heading: req.body.heading,
+            category: req.body.category,
+            content: req.body.content,
+            Image: req.files,
+            createdBy: req.query.id
+        }).save()
+            .then(response => {
+                res.redirect('/createBlog');
+            })
+            .catch(error => {
+                console.error("Error saving blog post:", error);
+                res.render('user/404.hbs');
+            });
+    });
+};
+
 const logout = (req, res) => {
     try {
         res.cookie('userJwt', null, {
             httpOnly: true,
             samSite: 'lax',
             secure: false,
-            maxAge: 1
+            maxAge: 1 // Expire the cookie immediately
         })
         req.cookies.userJwt = null
         res.redirect('/')
     } catch (error) {
-        
+        res.render('user/404.hbs');
     }
 }
 

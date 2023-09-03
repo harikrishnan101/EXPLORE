@@ -4,6 +4,7 @@ function dosignUp() {
       formData.name = document.getElementById("name").value
       formData.email = document.getElementById("email").value
       formData.password = document.getElementById("password").value
+      formData.number = document.getElementById("number").value
   
   
       fetch('/register', {
@@ -16,7 +17,7 @@ function dosignUp() {
           .then((response) => response.json())
           .then((data) => {
               window.location.href = '/'
-              console.log(data.signup);
+            //   console.log(data.signup);
           })
   } catch (error) {
     

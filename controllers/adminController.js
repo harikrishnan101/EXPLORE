@@ -3,7 +3,7 @@ const BLOGS = require("../models/blogSchema")
 const UploadPage = ((req, res) => {
     res.render('admin/upload.hbs')
 })
-
+// Blog create*************
 const createBlog = (req, res) => {
    try {
      const fileStorage = multer.diskStorage({
@@ -34,12 +34,15 @@ const createBlog = (req, res) => {
     
   }
 }
+// homepage*******************
+
 const homepage = (req, res) => {
     BLOGS.find().then((response) => {
         res.render('admin/adminhome.hbs', { data: response })
     })
 
 }
+// delete_post***************
 const deletePost = (req, res) => {
    try {
      BLOGS.findOne({ _id: req.body.postId }).then(selectedFileData => {
