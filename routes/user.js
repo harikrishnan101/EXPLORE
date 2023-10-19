@@ -9,7 +9,7 @@ router.get('/signup',signup)
 router.post('/register',doSignup)
 router.post('/login',doLogin)
 router.get('/home',userauth,homePage)
-router.get('/detailedview',userauth,detailedview)
+router.get('/detailedview',userauth,detailedview);
 router.get('/logout',logout)
 router.get('/createBlog',userauth,createBlog)
 router.post('/createBlog',userauth,addBlogData)
