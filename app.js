@@ -12,7 +12,7 @@ const admin=require('./routes/admin')
 
 connectDB()
 app.set('view-engine','hbs')
-app.set('views',path.join(__dirname,'pages'))
+app.set('views',path.join(__dirname,'pages'))     
 app.use(express.static(path.join(__dirname,'public')))
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
@@ -27,7 +27,7 @@ app.use('/signup',user)
 app.use('/admin',admin)
 
 
-app.listen(4000)
+app.listen(5000)
 
 
 
