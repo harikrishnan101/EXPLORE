@@ -130,7 +130,7 @@ function validatePass(){
    
 let validateall=()=>{
     validatename();
-    validateno()
+    validateno();
     validateemail();
     return true
 
